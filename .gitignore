@@ -1,0 +1,12 @@
+# local preview output
+_preview/
+
+# jekyll
+_site/
+.jekyll-cache/
+.jekyll-metadata
+vendor/
+.bundle/
+
+# macOS
+.DS_Store

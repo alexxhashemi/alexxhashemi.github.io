@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shiraz | Alex Hashemi</title>
+<meta name="description" content="Shiraz, a self-hosted autonomous multi-agent system built by Alex Hashemi.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css?v=202611271320">
+<link rel="stylesheet" href="shiraz.css?v=202611271320">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('theme'); } catch (e) {}
+    document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+  })();
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="bar">
+  <div class="bar-inner">
+    <a class="brand" href="./">Alex Hashemi</a>
+    <nav class="nav" aria-label="Primary"><a href="about.html">About</a><a href="research.html">Research</a><a href="publications.html">Publications</a><a href="talks.html">Talks</a><a href="projects.html">Projects</a></nav>
+    <div class="icons"><a class="stroke" href="mailto:alexhash@yorku.ca" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg></a><a class="" href="https://scholar.google.ca/citations?view_op=list_works&amp;hl=en&amp;user=wjBx0VoAAAAJ" aria-label="Google Scholar" title="Google Scholar" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 1 8.5l11 5.5 9-4.5v6h2V8.5L12 3z"/><path d="M5 12.75V17c0 1.66 3.13 3 7 3s7-1.34 7-3v-4.25l-7 3.5-7-3.5z"/></svg></a><a class="" href="https://x.com/alexxhashemi" aria-label="X (Twitter)" title="X (Twitter)" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.67l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"/></svg></a>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light mode" title="Switch to light mode">
+        <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.8 6.8 0 0 0 10.7 10.7z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<main id="main" class="wide">
+<div class="shz">
+<h1>Shiraz, Autonomous Multi-Agent System</h1>
+    <p class="section-intro">
+      A self-hosted multi-agent system running on Hermes Agent (Nous Research). Seven profiles in
+      total: one orchestrator and six headless specialists. I only ever message one of them.
+    </p>
+
+    <div class="agent-highlight">
+      <p><strong>Shiraz is not a layer above Hermes.</strong> Shiraz is a Hermes profile, running on
+      the same engine as every specialist below it. What makes it the orchestrator is not privileged
+      infrastructure: it holds the schedule, the routing rules, and the only messaging gateway in
+      the system.</p>
+    </div>
+
+    <!-- ARCHITECTURE DIAGRAM
+         Connector strokes live in inline style attributes, NOT in a stylesheet.
+         SVG defaults `stroke` to `none`, so a path relying on a stylesheet rule
+         draws nothing at all if that rule fails to apply, while its arrowhead
+         still renders. Inline styles cannot fail that way. Arrowheads are drawn
+         paths rather than <marker> elements for the same reason. Route hover is
+         driven by shiraz.js, which rewrites these same inline styles. -->
+    <figure class="arch">
+      <div class="arch-scroll">
+        <svg viewBox="0 0 900 560" role="img"
+             aria-label="Architecture: I message one Telegram bot, Shiraz, which routes work to six headless specialists. Results return only to Shiraz. A Make.com scenario notifies through the same bot. Hovering a specialist traces its route from the orchestrator.">
+
+          <!-- external: Make.com, pipeline 3 -->
+          <a href="#pipeline-3"><text class="d-pipe" x="20" y="64">Pipeline 3 &#8599;</text></a>
+          <g class="dimmable">
+            <rect class="d-box-ext" x="20" y="76" width="152" height="50" rx="8"/>
+            <text class="d-label" x="96" y="99" text-anchor="middle">Make.com</text>
+            <text class="d-sub" x="96" y="116" text-anchor="middle">external automation</text>
+            <path class="rt-dash" style="stroke:var(--text-dim);stroke-width:1.8;stroke-dasharray:5 4;fill:none" d="M172,101 L319,101"/>
+            <path class="rt-head-dim" style="fill:var(--text-dim);stroke:none" d="M319,96 L319,106 L328,101 Z"/>
+          </g>
+
+          <!-- me -->
+          <g class="dimmable">
+            <rect class="d-box" x="390" y="8" width="120" height="40" rx="8"/>
+            <text class="d-label" x="450" y="34" text-anchor="middle">Me</text>
+            <path class="rt-line" style="stroke:var(--line);stroke-width:2.1;fill:none" d="M450,48 L450,67"/>
+            <path class="rt-head" style="fill:var(--line);stroke:none" d="M445,67 L455,67 L450,76 Z"/>
+          </g>
+
+          <!-- the single gateway -->
+          <g class="dimmable">
+            <rect class="d-box-accent" x="330" y="76" width="240" height="50" rx="8"/>
+            <text class="d-label-accent" x="450" y="99" text-anchor="middle">Telegram, Shiraz bot</text>
+            <text class="d-sub" x="450" y="117" text-anchor="middle">the only gateway in the system</text>
+            <path class="rt-line" style="stroke:var(--line);stroke-width:2.1;fill:none" d="M450,126 L450,141"/>
+            <path class="rt-head" style="fill:var(--line);stroke:none" d="M445,141 L455,141 L450,150 Z"/>
+          </g>
+
+          <!-- orchestrator: every route below starts here -->
+          <rect class="d-box-accent" x="325" y="150" width="250" height="58" rx="8"/>
+          <text class="d-label-accent" x="450" y="177" text-anchor="middle">Shiraz, Orchestrator</text>
+          <text class="d-sub" x="450" y="196" text-anchor="middle">schedules, routes, holds approvals</text>
+
+          <a href="#pipeline-1"><text class="d-pipe" x="75" y="274">Pipeline 1 &#8599;</text></a>
+          <a href="#pipeline-2"><text class="d-pipe" x="265" y="424">Pipeline 2 &#8599;</text></a>
+
+          <g class="route" data-route="news">
+            <title>News Agent. Routed from Shiraz six times daily. Writes to news_archive, which Video Producer reads.</title>
+            <path class="rt-hit"  style="stroke:transparent;stroke-width:20;fill:none;pointer-events:stroke" d="M450,208 L450,248 L162,248 L162,277"/>
+            <path class="rt-line" style="stroke:var(--line);stroke-width:2.1;fill:none" d="M450,208 L450,248 L162,248 L162,277"/>
+            <path class="rt-head" style="fill:var(--line);stroke:none" d="M157,277 L167,277 L162,286 Z"/>
+            <path class="rt-dash" style="stroke:var(--text-dim);stroke-width:1.8;stroke-dasharray:5 4;fill:none" d="M162,346 L162,368 L542,368 L542,357"/>
+            <path class="rt-head-dim" style="fill:var(--text-dim);stroke:none" d="M537,357 L547,357 L542,348 Z"/>
+            <path class="rt-hit"  style="stroke:transparent;stroke-width:20;fill:none;pointer-events:stroke" d="M162,346 L162,368 L542,368 L542,357"/>
+            <rect class="rt-box" style="fill:var(--surface-2);stroke:var(--accent-2);stroke-width:1.9" x="75" y="286" width="175" height="60" rx="8"/>
+            <text class="d-label" x="162" y="313" text-anchor="middle">News Agent</text>
+            <text class="d-sub" x="162" y="332" text-anchor="middle">6x daily, archives</text>
+          </g>
+          <g class="route" data-route="xpost">
+            <title>X Post Agent. Routed from Shiraz three times daily. Self-contained: never reads news_archive.</title>
+            <path class="rt-hit"  style="stroke:transparent;stroke-width:20;fill:none;pointer-events:stroke" d="M450,208 L450,248 L352,248 L352,277"/>
+            <path class="rt-line" style="stroke:var(--line);stroke-width:2.1;fill:none" d="M450,208 L450,248 L352,248 L352,277"/>
+            <path class="rt-head" style="fill:var(--line);stroke:none" d="M347,277 L357,277 L352,286 Z"/>
+            <rect class="rt-box" style="fill:var(--surface-2);stroke:var(--accent-2);stroke-width:1.9" x="265" y="286" width="175" height="60" rx="8"/>
+            <text class="d-label" x="352" y="313" text-anchor="middle">X Post Agent</text>
+            <text class="d-sub" x="352" y="332" text-anchor="middle">3x daily, self-contained</text>
+          </g>
+          <g class="route" data-route="video">
+            <title>Video Producer. Routed from Shiraz at 16:30. Reads news_archive and selects its own stories.</title>
+            <path class="rt-hit"  style="stroke:transparent;stroke-width:20;fill:none;pointer-events:stroke" d="M450,208 L450,248 L542,248 L542,277"/>
+            <path class="rt-line" style="stroke:var(--line);stroke-width:2.1;fill:none" d="M450,208 L450,248 L542,248 L542,277"/>
+            <path class="rt-head" style="fill:var(--line);stroke:none" d="M537,277 L547,277 L542,286 Z"/>
+            <path class="rt-dash" style="stroke:var(--text-dim);stroke-width:1.8;stroke-dasharray:5 4;fill:none" d="M162,346 L162,368 L542,368 L542,357"/>
+            <path class="rt-head-dim" style="fill:var(--text-dim);stroke:none" d="M537,357 L547,357 L542,348 Z"/>
+            <path class="rt-hit"  style="stroke:transparent;stroke-width:20;fill:none;pointer-events:stroke" d="M162,346 L162,368 L542,368 L542,357"/>
+            <rect class="rt-box" style="fill:var(--surface-2);stroke:var(--accent-2);stroke-width:1.9" x="455" y="286" width="175" height="60" rx="8"/>
+            <text class="d-label" x="542" y="313" text-anchor="middle">Video Producer</text>
+            <text class="d-sub" x="542" y="332" text-anchor="middle">16:30, renders video</text>
+          </g>
+          <g class="route" data-route="cleanup">
+            <title>Cleanup. Routed from Shiraz at 23:30. Deterministic script, no model calls.</title>
+            <path class="rt-hit"  style="stroke:transparent;stroke-width:20;fill:none;pointer-events:stroke" d="M450,208 L450,248 L732,248 L732,277"/>
+            <path class="rt-line" style="stroke:var(--line);stroke-width:2.1;fill:none" d="M450,208 L450,248 L732,248 L732,277"/>
+            <path class="rt-head" style="fill:var(--line);stroke:none" d="M727,277 L737,277 L732,286 Z"/>
+            <rect class="rt-box" style="fill:var(--surface-2);stroke:var(--accent-2);stroke-width:1.9" x="645" y="286" width="175" height="60" rx="8"/>
+            <text class="d-label" x="732" y="313" text-anchor="middle">Cleanup</text>
+            <text class="d-sub" x="732" y="332" text-anchor="middle">23:30, prunes media</text>
+          </g>
+          <g class="route" data-route="writer">
+            <title>Internals Writer. Routed from Shiraz on Sunday at 09:00. Drafts all four formats, then hands to the Auditor.</title>
+            <path class="rt-hit"  style="stroke:transparent;stroke-width:20;fill:none;pointer-events:stroke" d="M450,208 L450,248 L60,248 L60,404 L365,404 L365,427"/>
+            <path class="rt-line" style="stroke:var(--line);stroke-width:2.1;fill:none" d="M450,208 L450,248 L60,248 L60,404 L365,404 L365,427"/>
+            <path class="rt-head" style="fill:var(--line);stroke:none" d="M360,427 L370,427 L365,436 Z"/>
+            <path class="rt-line" style="stroke:var(--line);stroke-width:2.1;fill:none" d="M467,466 L496,466"/>
+            <path class="rt-head" style="fill:var(--line);stroke:none" d="M496,461 L496,471 L505,466 Z"/>
+            <path class="rt-hit"  style="stroke:transparent;stroke-width:20;fill:none;pointer-events:stroke" d="M467,466 L496,466"/>
+            <rect class="rt-box" style="fill:var(--surface-2);stroke:var(--accent-2);stroke-width:1.9" x="265" y="436" width="200" height="60" rx="8"/>
+            <text class="d-label" x="365" y="463" text-anchor="middle">Internals Writer</text>
+            <text class="d-sub" x="365" y="482" text-anchor="middle">Sunday, Claude Sonnet 5.5</text>
+          </g>
+          <g class="route" data-route="auditor">
+            <title>Internals Auditor. Routed from Shiraz on Sunday at 09:20. Scores the Writer's drafts, advisory only.</title>
+            <path class="rt-hit"  style="stroke:transparent;stroke-width:20;fill:none;pointer-events:stroke" d="M450,208 L450,248 L60,248 L60,404 L605,404 L605,427"/>
+            <path class="rt-line" style="stroke:var(--line);stroke-width:2.1;fill:none" d="M450,208 L450,248 L60,248 L60,404 L605,404 L605,427"/>
+            <path class="rt-head" style="fill:var(--line);stroke:none" d="M600,427 L610,427 L605,436 Z"/>
+            <path class="rt-line" style="stroke:var(--line);stroke-width:2.1;fill:none" d="M467,466 L496,466"/>
+            <path class="rt-head" style="fill:var(--line);stroke:none" d="M496,461 L496,471 L505,466 Z"/>
+            <path class="rt-hit"  style="stroke:transparent;stroke-width:20;fill:none;pointer-events:stroke" d="M467,466 L496,466"/>
+            <rect class="rt-box" style="fill:var(--surface-2);stroke:var(--accent-2);stroke-width:1.9" x="505" y="436" width="200" height="60" rx="8"/>
+            <text class="d-label" x="605" y="463" text-anchor="middle">Internals Auditor</text>
+            <text class="d-sub" x="605" y="482" text-anchor="middle">Sunday, Grok, advisory</text>
+          </g>
+
+          <text class="d-sub-mono dimmable" x="352" y="387" text-anchor="middle">news_archive</text>
+
+          <!-- results return only to Shiraz -->
+          <g class="dimmable">
+            <path class="rt-dash" style="stroke:var(--text-dim);stroke-width:1.8;stroke-dasharray:5 4;fill:none" d="M707,466 L855,466 L855,172 L591,172"/>
+            <path class="rt-head-dim" style="fill:var(--text-dim);stroke:none" d="M591,167 L591,177 L582,172 Z"/>
+            <text class="d-sub" x="718" y="162" text-anchor="middle">results return to Shiraz only</text>
+          </g>
+
+          <text class="d-note" x="20" y="536">No specialist runs a Telegram gateway or holds a bot token. Every one of them is headless.</text>
+        </svg>
+      </div>
+      <figcaption>
+        Control flow. One gateway in, one orchestrator routing out, six headless specialists doing
+        the work. <strong>Hover any specialist</strong> to trace its route from the orchestrator;
+        News Agent and Video Producer also light the <code>news_archive</code> handoff between them.
+        Pipeline labels link through to the detail below.
+      </figcaption>
+    </figure>
+
+    <!-- AGENT ROSTER -->
+    <h3 class="sub-heading">The agents</h3>
+    <div class="table-scroll">
+      <table class="agent-table">
+        <thead>
+          <tr><th>Specialist</th><th>Model</th><th>Runs</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>News Agent</strong><span class="td-sub">Searches, deduplicates, archives</span></td>
+            <td>Grok 4.7</td>
+            <td>6x daily</td>
+            <td><span class="status status-live">Live</span></td>
+          </tr>
+          <tr>
+            <td><strong>X Post Agent</strong><span class="td-sub">Searches and posts in one run</span></td>
+            <td>Grok 4.7</td>
+            <td>3x daily</td>
+            <td><span class="status status-live">Live</span></td>
+          </tr>
+          <tr>
+            <td><strong>Video Producer</strong><span class="td-sub">Script, voiceover, footage, render, upload</span></td>
+            <td>grok-4.1-fast<span class="td-sub">scene classification only</span></td>
+            <td>16:30 daily</td>
+            <td><span class="status status-live">Live</span></td>
+          </tr>
+          <tr>
+            <td><strong>Cleanup</strong><span class="td-sub">Age-based deletion on fixed retention windows</span></td>
+            <td>none<span class="td-sub">deterministic script</span></td>
+            <td>23:30 daily</td>
+            <td><span class="status status-live">Live</span></td>
+          </tr>
+          <tr>
+            <td><strong>Internals Writer</strong><span class="td-sub">Drafts all four formats</span></td>
+            <td>Claude Sonnet 5.5</td>
+            <td>Sunday 09:00</td>
+            <td><span class="status status-live">Live</span></td>
+          </tr>
+          <tr>
+            <td><strong>Internals Auditor</strong><span class="td-sub">Scores drafts, advisory only</span></td>
+            <td>Grok 4.7</td>
+            <td>Sunday 09:20</td>
+            <td><span class="status status-live">Live</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-note">
+      Model choice follows the job rather than the system, and so does the naming. Cleanup is not
+      called an agent because it does not reason: fixed retention windows, age-based deletion, no
+      judgement at any step. The others search, compose, or score, and are named accordingly.
+    </p>
+
+    <!-- DAILY SCHEDULE -->
+    <h3 class="sub-heading">A day in the system</h3>
+    <figure class="arch">
+      <div class="arch-scroll">
+        <svg viewBox="0 0 900 250" role="img"
+             aria-label="Daily schedule: News Agent runs at 03:00, 08:45, 11:30, 13:45, 15:00 and 16:45. X Post Agent at 09:00, 14:00 and 17:00. Video Producer at 16:30. Cleanup at 23:30.">
+          <text class="d-lane" x="10" y="45">News Agent</text>
+          <text class="d-lane" x="10" y="83">X Post Agent</text>
+          <text class="d-lane" x="10" y="121">Video Producer</text>
+          <text class="d-lane" x="10" y="159">Cleanup</text>
+
+          <path class="d-rule" fill="none" d="M120,40 L880,40"/>
+          <path class="d-rule" fill="none" d="M120,78 L880,78"/>
+          <path class="d-rule" fill="none" d="M120,116 L880,116"/>
+          <path class="d-rule" fill="none" d="M120,154 L880,154"/>
+
+          <circle class="d-dot-news" cx="215" cy="40" r="7.5"/>
+          <circle class="d-dot-news" cx="397" cy="40" r="7.5"/>
+          <circle class="d-dot-news" cx="484" cy="40" r="7.5"/>
+          <circle class="d-dot-news" cx="555" cy="40" r="7.5"/>
+          <circle class="d-dot-news" cx="595" cy="40" r="7.5"/>
+          <circle class="d-dot-news" cx="650" cy="40" r="7.5"/>
+
+          <circle class="d-dot-x" cx="405" cy="78" r="7.5"/>
+          <circle class="d-dot-x" cx="563" cy="78" r="7.5"/>
+          <circle class="d-dot-x" cx="658" cy="78" r="7.5"/>
+
+          <circle class="d-dot-video" cx="642" cy="116" r="7.5"/>
+
+          <circle class="d-dot-clean" cx="864" cy="154" r="7.5"/>
+
+          <path class="d-axis" fill="none" d="M120,195 L880,195"/>
+          <path class="d-tick" fill="none" d="M120,195 L120,202"/>
+          <path class="d-tick" fill="none" d="M215,195 L215,202"/>
+          <path class="d-tick" fill="none" d="M310,195 L310,202"/>
+          <path class="d-tick" fill="none" d="M405,195 L405,202"/>
+          <path class="d-tick" fill="none" d="M500,195 L500,202"/>
+          <path class="d-tick" fill="none" d="M595,195 L595,202"/>
+          <path class="d-tick" fill="none" d="M690,195 L690,202"/>
+          <path class="d-tick" fill="none" d="M785,195 L785,202"/>
+          <path class="d-tick" fill="none" d="M880,195 L880,202"/>
+
+          <text class="d-sub" x="120" y="219" text-anchor="middle">00</text>
+          <text class="d-sub" x="215" y="219" text-anchor="middle">03</text>
+          <text class="d-sub" x="310" y="219" text-anchor="middle">06</text>
+          <text class="d-sub" x="405" y="219" text-anchor="middle">09</text>
+          <text class="d-sub" x="500" y="219" text-anchor="middle">12</text>
+          <text class="d-sub" x="595" y="219" text-anchor="middle">15</text>
+          <text class="d-sub" x="690" y="219" text-anchor="middle">18</text>
+          <text class="d-sub" x="785" y="219" text-anchor="middle">21</text>
+          <text class="d-sub" x="880" y="219" text-anchor="middle">24</text>
+
+          <text class="d-note" x="120" y="243">Eleven unattended jobs a day. Sunday adds the Internals pair on top.</text>
+        </svg>
+      </div>
+      <figcaption>
+        Search passes are staggered rather than batched, so the archive holds genuinely distinct
+        stories rather than one moment in time.
+      </figcaption>
+    </figure>
+
+    <!-- PIPELINES -->
+    <h3 class="sub-heading">What the system produces</h3>
+
+    <article class="pipeline-block" id="pipeline-1">
+      <div class="pipeline-meta">
+        <span class="format-badge format-mechanics">Pipeline 01</span>
+        <span class="pipeline-cadence">daily</span>
+      </div>
+      <h3>AI, Tech and Space News</h3>
+      <p class="pipeline-summary">
+        News Agent archives stories through the day. X Post Agent searches and publishes to X three
+        times daily, independently. Video Producer reads the archive at 16:30, picks its own
+        stories, and renders a finished multi-scene video to YouTube.
+      </p>
+
+      <details class="disclosure">
+        <summary>
+          <span class="disclosure-label">How it works</span>
+          <span class="disclosure-hint">archive, posting, video render, cleanup</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="disclosure-body">
+          <div class="timeline pipeline">
+            <div class="timeline-item">
+              <span class="timeline-year">01</span>
+              <div>
+                <h4>News Agent</h4>
+                <p>Six staggered passes a day scan AI, ML, tech and space news, appending clean
+                summaries to <code>news_archive</code>. A text-similarity check drops near-duplicate
+                stories before they reach production. This archive feeds the video pipeline only.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-year">02</span>
+              <div>
+                <h4>X Post Agent</h4>
+                <p>Deliberately self-contained: it searches for post-worthy items and publishes in
+                the same run, and never reads the archive. Three times daily, through Buffer's API.
+                Posting times come from published engagement research rather than a guess.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-year">03</span>
+              <div>
+                <h4>Video Producer</h4>
+                <p>Reads the archive and <strong>selects several distinct stories itself</strong>,
+                rather than being handed one topic. Writes a script segment per story, generates a
+                voiceover per segment via Grok TTS with character-level timestamps, fetches a
+                separate matched stock clip per segment from Pexels, cuts scene to scene, renders
+                locally with <strong>HyperFrames</strong> (HTML/CSS/GSAP compiled to MP4 via
+                headless Chrome and FFmpeg), then uploads through the YouTube Data API v3.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-year">04</span>
+              <div>
+                <h4>Cleanup</h4>
+                <p>A nightly deterministic script on fixed retention windows: one day for generated
+                media, three for archive entries. Age-based deletion, no model calls, no judgement.
+                That is why it is the one specialist here not called an agent.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="agent-highlight">
+            <p><strong>The decision that shaped the build:</strong> the obvious approach is to call
+            an AI video-generation API, which bills per second of rendered footage, roughly $2.40
+            per video in testing. Rendering locally brought the marginal cost down to cents, with
+            voiceover the only remaining per-video API charge.</p>
+          </div>
+
+          <h4 class="disclosure-subhead">Details that came out of building it</h4>
+          <ul class="detail-list">
+            <li>Footage is matched per story rather than one clip stretched across the whole video.</li>
+            <li>Scene cuts are timed to character-level TTS timestamps rather than an equal split,
+            so cuts land on the words being spoken.</li>
+            <li>Clips are tiled rather than looped, because deterministic renderers stall when asked
+            to seek past the end of a source file.</li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <article class="pipeline-block" id="pipeline-2">
+      <div class="pipeline-meta">
+        <span class="format-badge format-anatomy">Pipeline 02</span>
+        <span class="pipeline-cadence">weekly</span>
+      </div>
+      <h3>Internals: a weekly study brief</h3>
+      <p class="pipeline-summary">
+        Two agents in a strict chain every Sunday. Internals Writer (Claude Sonnet 5.5) researches
+        four topics on how technical systems actually work and drafts a short brief on each;
+        Internals Auditor (Grok 4.7) scores them against a rubric. The scores are advisory: they
+        never auto-reject. The briefs come to me as private study notes, and I decide which ones
+        are worth keeping.
+      </p>
+
+      <details class="disclosure">
+        <summary>
+          <span class="disclosure-label">How it works</span>
+          <span class="disclosure-hint">formats, the Sunday chain, two different gates</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="disclosure-body">
+          <h4 class="disclosure-subhead" style="margin-top:0;border-top:0;padding-top:0">The four formats</h4>
+          <div class="timeline pipeline">
+            <div class="timeline-item">
+              <span class="timeline-year">01</span>
+              <div>
+                <h4>Mechanics</h4>
+                <p>How something actually works: an algorithm, data structure, or technique, at the
+                mechanism level rather than tied to a product.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-year">02</span>
+              <div>
+                <h4>Anatomy</h4>
+                <p>Dissecting a system into the jobs it must do, using specific products only as
+                illustration.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-year">03</span>
+              <div>
+                <h4>Case File</h4>
+                <p>A documented incident reconstructed: what happened, what it exposed, what stayed
+                true afterwards. Drawn from a pre-vetted bank of real, sourced incidents, never
+                invented live. If the bank runs dry the format is skipped for the week rather than
+                filled with a fabricated case.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-year">04</span>
+              <div>
+                <h4>Concept + Critique</h4>
+                <p>An idea explained on its own terms, then examined for where it breaks or gets
+                asked to carry more than it can.</p>
+              </div>
+            </div>
+          </div>
+
+          <h4 class="disclosure-subhead">The Sunday chain</h4>
+          <ul class="detail-list">
+            <li><strong>09:00, Internals Writer (Claude Sonnet 5.5)</strong> finds material and
+            drafts all four briefs, checking each against earlier weeks so it never repeats a
+            topic.</li>
+            <li><strong>09:20, Internals Auditor (Grok 4.7)</strong> scores each brief on a rubric:
+            non-obvious, mechanism depth, durability, accuracy, and for case files, sourcing.</li>
+            <li><strong>Shiraz</strong> sends the four briefs plus their audit scores to Telegram.</li>
+            <li><strong>I decide</strong> which to keep: the whole batch, a subset, or none.</li>
+          </ul>
+
+          <div class="agent-highlight">
+            <p><strong>Sourcing is enforced twice, and the two are not the same thing.</strong> The
+            Auditor scores sourcing quality, but that score is advisory and blocks nothing.
+            Separately, a check in code hard-blocks any case-file draft with no sources attached,
+            before it ever reaches me. One is a judgement, the other is a gate. Keeping them
+            distinct matters: an advisory score that silently becomes a blocker is a system whose
+            behaviour you can no longer predict.</p>
+          </div>
+        </div>
+      </details>
+    </article>
+
+    <article class="pipeline-block" id="pipeline-3">
+      <div class="pipeline-meta">
+        <span class="format-badge format-case-file">Pipeline 03</span>
+        <span class="pipeline-cadence">event-driven</span>
+      </div>
+      <h3>Medical Appointment Automation</h3>
+      <p class="pipeline-summary">
+        Bridges a locked, API-less hospital portal into an intelligent pipeline. Runs entirely
+        outside Hermes in Make.com, and its only touchpoint with the agent system is the final
+        Telegram step, which points at Shiraz's bot like everything else.
+      </p>
+
+      <details class="disclosure">
+        <summary>
+          <span class="disclosure-label">How it works</span>
+          <span class="disclosure-hint">the constraint, extraction, agent handoff</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="disclosure-body">
+          <div class="agent-highlight">
+            <p><strong>The problem:</strong> UHN's patient portal (Epic MyChart) exposes no public
+            API for appointment data. No webhook, no calendar feed by default, no way to pull
+            scheduled visits programmatically. The only reliable signal the system emits is a
+            confirmation email from a specific sender every time an appointment is booked. That
+            email is the only extraction point.</p>
+          </div>
+
+          <div class="timeline pipeline">
+            <div class="timeline-item">
+              <span class="timeline-year">01</span>
+              <div>
+                <h4>Gmail, watch emails (trigger)</h4>
+                <p>Polls Gmail on a 24-hour interval, filtered to the UHN appointment sender. When a
+                matching email arrives, it passes the full plain-text body downstream.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-year">02</span>
+              <div>
+                <h4>Text parser, match pattern</h4>
+                <p>A single regex with named capture groups extracts every relevant field in one
+                pass, outputting five clean variables: <code>date</code>,
+                <code>appointment_time</code>, <code>arrival_time</code>, <code>provider</code>, and
+                <code>department</code>. The bridge pattern handles the variable-length block
+                between arrival time and the provider and department lines, which differs between
+                appointment types, and the provider group is optional because not all confirmations
+                include one.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-year">03</span>
+              <div>
+                <h4>Google Calendar, create event</h4>
+                <p>Maps the parsed variables directly into a new calendar event. Date and time
+                fields are mapped explicitly rather than using natural-language "quick add" mode,
+                which would require passing a single string and risk a misparse. The event name is
+                built from <code>department</code> so appointments are immediately identifiable.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-year">04</span>
+              <div>
+                <h4>Telegram, agent handoff</h4>
+                <p>Fires a formatted message to Shiraz's bot carrying all five parsed fields. This
+                is where the pipeline stops being a simple automation and becomes an agent handoff.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="agent-highlight">
+            <p><strong>Why the Telegram step matters:</strong> Google Calendar receives the
+            appointment as a dumb calendar block. Shiraz receives it as structured, reasoned input.
+            Because it gets the raw fields rather than just a notification, it can do things a
+            calendar event cannot: cross-reference the appointment against my existing schedule,
+            calculate departure time based on hospital location, flag back-to-back appointments
+            where one arrival time overlaps the end of another, or surface pre-appointment
+            instructions buried in the email body. Make handles extraction and fan-out, Shiraz
+            handles the intelligence layer, and each tool does what it is actually good at.</p>
+          </div>
+
+          <p class="pipeline-summary">
+            The only constraint is the 24-hour polling interval on the Gmail trigger, a Make
+            free-tier limitation that drops to 15 minutes on a paid plan.
+          </p>
+        </div>
+      </details>
+    </article>
+
+    <!-- IN PROGRESS -->
+    <h3 class="sub-heading">In progress</h3>
+
+    <article class="pipeline-block" id="voice-interface">
+      <div class="pipeline-meta">
+        <span class="format-badge format-concept-critique">Voice interface</span>
+      </div>
+      <h3>Talking to Shiraz locally</h3>
+      <p class="pipeline-summary">
+        Everything above is driven by typing into a Telegram bot. The next extension is voice:
+        speaking to the agent the way you would to a smart speaker, without sending any audio to
+        Amazon or anyone else. Three local, open-source pieces chained together, none of which
+        need a network connection to do their job.
+      </p>
+      <details class="disclosure">
+        <summary>
+          <span class="disclosure-label">How it works</span>
+          <span class="disclosure-hint">wake word, transcription, speech, and what stays on the machine</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="disclosure-body">
+          <div class="agent-highlight">
+            <p><strong>Voice is not a new agent, it is a new interface to the one that already
+            exists.</strong> The wake word script does not know or care that its output is about to
+            become spoken audio rather than a Telegram reply. From Shiraz's side a spoken question
+            and a typed one look identical, which is why this adds a way in without adding an
+            eighth profile to the system.</p>
+          </div>
+
+          <div class="timeline pipeline">
+            <div class="timeline-item"><span class="timeline-year">01</span><div>
+              <h4>openWakeWord</h4>
+              <p>Listens continuously for a wake phrase and does no real processing until it hears
+              one. Everything downstream stays idle until this fires.</p>
+            </div></div>
+            <div class="timeline-item"><span class="timeline-year">02</span><div>
+              <h4>Whisper, via faster-whisper</h4>
+              <p>Transcribes the spoken question to text on-device, once the wake word has
+              triggered.</p>
+            </div></div>
+            <div class="timeline-item"><span class="timeline-year">03</span><div>
+              <h4>Piper</h4>
+              <p>Turns Shiraz's text reply back into speech, also entirely locally.</p>
+            </div></div>
+          </div>
+
+          <h4 class="disclosure-subhead">What actually leaves the machine</h4>
+          <ul class="detail-list">
+            <li>No audio, at any stage. Listening, transcription and playback all happen
+            on-device.</li>
+            <li>Only the question text, which reaches Shiraz's existing model backend exactly the
+            way a Telegram message already does.</li>
+          </ul>
+
+          <h4 class="disclosure-subhead">Where it stands</h4>
+          <ul class="detail-list">
+            <li>Proven piece by piece so far: Piper generating natural speech from text, and the
+            microphone and wake-word detection picking up spoken audio in real time.</li>
+            <li>Still to do: wiring those pieces into one continuous loop, connecting that loop to
+            Shiraz's backend, and training a custom &quot;hey Shiraz&quot; wake word to replace the
+            stand-in phrase.</li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <!-- DESIGN NOTES -->
+    <h3 class="sub-heading">Design notes</h3>
+
+    <details class="disclosure">
+      <summary>
+        <span class="disclosure-label">Why six specialists instead of one agent</span>
+        <span class="disclosure-hint">the case for splitting, and what it cost</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </summary>
+      <div class="disclosure-body">
+        <p class="pipeline-summary">
+          All of this ran as a single Hermes agent first, and it worked. The case for splitting was
+          not that more agents are inherently better. It was three specific problems that only show
+          up once several distinct jobs share one context.
+        </p>
+
+        <h4 class="disclosure-subhead">Failure isolation</h4>
+        <p class="pipeline-summary">
+          A misfire in one job used to risk the whole agent's context. One bad reasoning loop sat in
+          the same session as the code publishing that day's video. Split apart, a stuck News Agent
+          run has zero effect on whether Video Producer or X Post Agent complete theirs.
+        </p>
+
+        <h4 class="disclosure-subhead">Cost matched to the actual job</h4>
+        <p class="pipeline-summary">
+          One model for everything means every task pays for whatever the most demanding task needs.
+          Split, each profile's model reflects what it actually does, down to Cleanup needing no
+          model at all. That distinction was invisible inside one shared agent.
+        </p>
+
+        <h4 class="disclosure-subhead">Memory that does not dilute</h4>
+        <p class="pipeline-summary">
+          In one agent, everything it learns sits in the same memory: which news sources double-post,
+          what the video voice sounds like, what makes a good Internals entry. Split, each profile's
+          memory fills only with what is relevant to its one job, so News Agent gets sharper at
+          source reliability without that being buried under video-pacing notes.
+        </p>
+
+        <div class="agent-highlight">
+          <p><strong>What splitting did not do: make any single profile smarter.</strong> Same model
+          capability either way. The entire benefit is structural: smaller blast radius, spend that
+          matches the task, memory that compounds toward the right thing. It also is not free. Six
+          profiles is more surface to configure, monitor and maintain than one. The trade was worth
+          making here because four genuinely distinct jobs had already accumulated on one profile,
+          not because splitting is correct by default.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="disclosure">
+      <summary>
+        <span class="disclosure-label">Migration notes</span>
+        <span class="disclosure-hint">how the cutover was sequenced, and what went wrong</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </summary>
+      <div class="disclosure-body">
+        <p class="pipeline-summary">
+          Moving from one profile to seven could not be done in a single switch. The original
+          single-profile Shiraz was still running every equivalent job on the same schedule, so
+          starting a new profile before disabling the old job produces duplicate work: duplicate
+          posts, duplicate renders, duplicate archive writes.
+        </p>
+
+        <div class="agent-highlight">
+          <p><strong>So cutover ran one profile at a time.</strong> Disable the old job and start the
+          new gateway in the same sitting, then confirm that profile's first real unattended run
+          before touching the next one. Slower than a big-bang switch, but each step is verifiable
+          and reversible on its own.</p>
+        </div>
+
+        <h4 class="disclosure-subhead">What went wrong, and what it taught</h4>
+        <ul class="detail-list">
+          <li>News Agent's four search jobs ran in parallel with the original profile's equivalent
+          jobs for several hours before the duplication was noticed and the old copies removed. The
+          one-at-a-time discipline above is a direct response to that, not a precaution written in
+          advance.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="disclosure" id="shiraz-stack">
+      <summary>
+        <span class="disclosure-label">Stack</span>
+        <span class="disclosure-hint">runtime, models, APIs and rendering</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </summary>
+      <div class="disclosure-body">
+        <div class="skills-groups">
+          <div class="skill-group">
+            <h4>// agent runtime</h4>
+            <div class="tag-cloud">
+              <span class="pill pill-accent">Hermes Agent</span>
+              <span class="pill pill-accent">Multi-Agent Orchestration</span>
+              <span class="pill pill-accent">launchd / cron</span>
+              <span class="pill pill-accent">Telegram</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4>// models</h4>
+            <div class="tag-cloud">
+              <span class="pill pill-accent">Grok 4.7</span>
+              <span class="pill pill-accent">grok-4.1-fast</span>
+              <span class="pill pill-accent">Grok TTS</span>
+              <span class="pill pill-accent">Claude Sonnet 5.5</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4>// media pipeline</h4>
+            <div class="tag-cloud">
+              <span class="pill pill-accent">Python</span>
+              <span class="pill pill-accent">HyperFrames</span>
+              <span class="pill pill-accent">HTML/CSS/GSAP</span>
+              <span class="pill pill-accent">ffmpeg / ffprobe</span>
+              <span class="pill pill-accent">Pexels API</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4>// publishing</h4>
+            <div class="tag-cloud">
+              <span class="pill pill-accent">Buffer API / MCP</span>
+              <span class="pill pill-accent">YouTube Data API v3</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4>// voice interface</h4>
+            <div class="tag-cloud">
+              <span class="pill pill-accent">openWakeWord</span>
+              <span class="pill pill-accent">Whisper</span>
+              <span class="pill pill-accent">faster-whisper</span>
+              <span class="pill pill-accent">Piper</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4>// external automation</h4>
+            <div class="tag-cloud">
+              <span class="pill pill-accent">Make.com</span>
+              <span class="pill pill-accent">Gmail API</span>
+              <span class="pill pill-accent">Google Calendar API</span>
+              <span class="pill pill-accent">Regex / Named Capture Groups</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- ALONGSIDE -->
+    <h3 class="sub-heading">Alongside Shiraz</h3>
+
+    <article class="pipeline-block" id="rakazo">
+      <div class="pipeline-meta">
+        <span class="format-badge format-mechanics">Self-hosted</span>
+      </div>
+      <h3>Rakazo, an open-source alternative to Grok Bot</h3>
+      <p class="pipeline-summary">
+        xAI's Grok Bot gives an agent its own browser and terminal on a cloud machine, at $200 a
+        month standalone or bundled into a top-tier subscription.
+        <a href="https://github.com/elie222/rakazo" target="_blank" rel="noopener">Rakazo</a> is an
+        open-source equivalent I run on my own hardware, alongside everything above. Each bot gets a
+        disposable Linux container with a real browser, a terminal, a filesystem, and memory that
+        survives between sessions. The framework itself is free, so the only cost is model tokens,
+        and the provider is a dropdown rather than a dependency: it is pointed at Grok 4.3 today,
+        and nothing breaks if that changes.
+      </p>
+      <p class="pipeline-summary">
+        I keep it scoped to work that genuinely needs a browser session and has no clean API:
+      </p>
+      <ul class="detail-list">
+        <li>Checking portals that offer no notification of their own, on a schedule.</li>
+        <li>Filling forms on sites that expose no API.</li>
+        <li>Click-through and rendering checks on my own pages.</li>
+        <li>Reading sources that refuse headless requests but tolerate a real browser.</li>
+      </ul>
+      <p class="pipeline-summary">
+        Anything reachable by an API or a plain script is handled elsewhere. This exists for the
+        residue that is not. It listens on loopback only, has no messaging channel of its own, and
+        holds no write access to anything that matters, so its output reaches me by file or by my
+        going and looking. The honest trade is that you give up polish and somebody else's on-call
+        rota, and get data locality and no vendor lock-in in exchange.
+      </p>
+    </article>
+
+</div>
+</main>
+<footer>&copy; 2026 Alex Hashemi</footer>
+<script src="shiraz.js?v=202611271320"></script>
+<script>
+  (function () {
+    var root = document.documentElement, btn = document.getElementById('themeToggle');
+    function sync() {
+      var light = root.getAttribute('data-theme') === 'light';
+      var label = light ? 'Switch to dark mode' : 'Switch to light mode';
+      btn.setAttribute('aria-label', label); btn.setAttribute('title', label);
+    }
+    btn.addEventListener('click', function () {
+      var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+      sync();
+    });
+    sync();
+  })();
+</script>
+</body>
+</html>
